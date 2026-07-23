@@ -24,6 +24,20 @@ const c = @cImport({
 /// written here, so the NAS keeps a durable capture independent of the WS.
 var logf: ?*c.FILE = null;
 
+/// Optional ingest command (built from P2000_INGEST_URL/SECRET). When set, each
+/// message is POSTed to the backend `/ingest` by piping the JSON into `curl`
+/// over stdin (no libcurl link; keeps the static musl binary simple).
+var ingest_cmd: ?[*:0]const u8 = null;
+var ingest_cmd_buf: [1024]u8 = undefined;
+
+/// POST one JSON message to the backend ingest endpoint (best-effort).
+fn postIngest(json: []const u8) void {
+    const cmd = ingest_cmd orelse return;
+    const f = c.popen(cmd, "w") orelse return;
+    _ = c.fwrite(json.ptr, 1, json.len, f);
+    _ = c.pclose(f);
+}
+
 const Config = struct {
     freq: [*:0]const u8,
     gain: [*:0]const u8,
@@ -117,6 +131,7 @@ fn runPipelineOnce(cmd: [*:0]const u8) i64 {
             _ = c.fputc('\n', lf);
             _ = c.fflush(lf);
         }
+        postIngest(json);
     }
     _ = c.pclose(f);
     return nowMs() - t0;
@@ -146,6 +161,19 @@ pub fn main() void {
     if (c.getenv("P2000_LOG")) |path| {
         logf = c.fopen(@ptrCast(path), "a");
         if (logf == null) log("agent: warning: cannot open P2000_LOG for append\n", .{});
+    }
+
+    // Build the ingest curl command once (JSON is piped via stdin, not argv).
+    if (c.getenv("P2000_INGEST_URL")) |url| {
+        const secret = c.getenv("P2000_INGEST_SECRET");
+        const built = if (secret) |s|
+            std.fmt.bufPrintZ(&ingest_cmd_buf, "curl -sS -m 10 -o /dev/null -X POST -H 'content-type: application/json' -H 'authorization: Bearer {s}' --data-binary @- '{s}'", .{ std.mem.span(@as([*:0]const u8, @ptrCast(s))), std.mem.span(@as([*:0]const u8, @ptrCast(url))) })
+        else
+            std.fmt.bufPrintZ(&ingest_cmd_buf, "curl -sS -m 10 -o /dev/null -X POST -H 'content-type: application/json' --data-binary @- '{s}'", .{std.mem.span(@as([*:0]const u8, @ptrCast(url)))});
+        if (built) |cmdz| {
+            ingest_cmd = cmdz.ptr;
+            log("agent: forwarding to ingest endpoint\n", .{});
+        } else |_| log("agent: warning: ingest URL too long\n", .{});
     }
 
     log("agent: P2000 @ {s} gain={s} ppm={s}\n", .{ std.mem.span(cfg.freq), std.mem.span(cfg.gain), std.mem.span(cfg.ppm) });

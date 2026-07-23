@@ -25,7 +25,7 @@ RUN git clone --depth 1 https://github.com/EliasOenal/multimon-ng /mm \
 
 # --- Runtime ---
 FROM ${ALPINE} AS runtime
-RUN apk add --no-cache rtl-sdr libusb
+RUN apk add --no-cache rtl-sdr libusb curl
 # Prebuilt static musl agent binary (must match the image arch; see build.sh).
 COPY dist/receiver-agent /usr/local/bin/receiver-agent
 COPY --from=mm-build /mm/build/multimon-ng /usr/local/bin/multimon-ng
