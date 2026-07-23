@@ -1,0 +1,14 @@
+{
+  "name": "radio",
+  "version": "0.0.0",
+  "private": true,
+  "description": "RTL-SDR receiving station — P2000 (and future feeds) → typeguru.nl",
+  "packageManager": "pnpm@11.0.9",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "agent:build": "pnpm --filter @radio/receiver-agent build",
+    "agent:test": "pnpm --filter @radio/receiver-agent test"
+  }
+}

@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: p2000
+  namespace: p2000
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    # SSE (/events) must stream, not buffer; keep the long-lived connection open.
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [p2000.typeguru.nl]
+      secretName: p2000-tls
+  rules:
+    - host: p2000.typeguru.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: p2000
+                port:
+                  number: 80

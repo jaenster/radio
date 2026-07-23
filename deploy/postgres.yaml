@@ -1,0 +1,29 @@
+# Dedicated Postgres for p2000.typeguru.nl via CloudNativePG. Two instances
+# (primary + replica, automatic failover). The app connects via the CNPG-managed
+# `p2000-pg-app` secret (key `uri`). Bootstrap creates database `p2000` owned by
+# the `p2000` role. No secrets in this file — CNPG generates credentials.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: p2000-pg
+  namespace: p2000
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  instances: 2
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
+    podAntiAffinityType: preferred
+  storage:
+    size: 5Gi
+    storageClass: hcloud-volumes
+  resources:
+    requests: { memory: 256Mi, cpu: 100m }
+    limits: { memory: 512Mi }
+  monitoring:
+    enablePodMonitor: true
+  bootstrap:
+    initdb:
+      database: p2000
+      owner: p2000

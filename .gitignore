@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.log
+
+# zig
+.zig-cache/
+zig-out/
+
+# local scratch
+out.log
+captures/

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: p2000
+  namespace: p2000
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: p2000 } }
+  template:
+    metadata: { labels: { app: p2000 } }
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector: { matchLabels: { app: p2000 } }
+                topologyKey: kubernetes.io/hostname
+      imagePullSecrets: [{ name: ghcr }]
+      containers:
+        - name: p2000
+          image: ghcr.io/jaenster/p2000:latest
+          imagePullPolicy: Always
+          ports: [{ containerPort: 3000 }]
+          env:
+            - { name: NODE_ENV, value: production }
+            - { name: PORT, value: "3000" }
+            # CNPG-managed credentials (secret p2000-pg-app, key uri).
+            - name: DATABASE_URL
+              valueFrom: { secretKeyRef: { name: p2000-pg-app, key: uri } }
+            # Shared secret the receiver-agent uses for POST /ingest (out-of-band).
+            - name: INGEST_SECRET
+              valueFrom: { secretKeyRef: { name: p2000-ingest, key: INGEST_SECRET } }
+          readinessProbe:
+            httpGet: { path: /health, port: 3000 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet: { path: /health, port: 3000 }
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 4
+          resources:
+            requests: { cpu: 50m, memory: 128Mi }
+            limits: { memory: 384Mi }

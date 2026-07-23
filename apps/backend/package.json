@@ -1,0 +1,23 @@
+{
+  "name": "@radio/backend",
+  "version": "0.0.0",
+  "private": true,
+  "description": "p2000.typeguru.nl — justscale backend (ingest, enrich, store, SSE, map)",
+  "type": "module",
+  "scripts": {
+    "dev": "node --import @justscale/typescript/register --import tsx src/main.ts",
+    "start": "node --import @justscale/typescript/register --import tsx src/main.ts"
+  },
+  "dependencies": {
+    "@justscale/core": "^0.1.5",
+    "@justscale/http": "^0.1.5",
+    "@justscale/sse": "^0.1.6",
+    "@justscale/postgres": "^0.1.5",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@justscale/typescript": "^0.1.5",
+    "tsx": "^4.19.2",
+    "@types/node": "^22.10.0"
+  }
+}

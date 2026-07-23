@@ -1,0 +1,13 @@
+{
+  "name": "@radio/receiver-agent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Zig NAS-side P2000 receiver: rtl_fm | multimon-ng -> FLEX parse -> wss",
+  "scripts": {
+    "test": "zig test src/flex.zig",
+    "dev": "zig build-exe src/main.zig -lc -femit-bin=zig-out/agent && ./zig-out/agent",
+    "compile:amd64": "./build.sh amd64",
+    "compile:arm64": "./build.sh arm64",
+    "image": "./build.sh amd64 && docker build -t p2000-receiver-agent ."
+  }
+}

@@ -1,0 +1,19 @@
+diff --git a/dist/pg-database.js b/dist/pg-database.js
+index 3f504adb6b554762e223f181684359d776d65a93..354d928491fe4b324cdb8aa10ab7363a602aa535 100644
+--- a/dist/pg-database.js
++++ b/dist/pg-database.js
+@@ -92,6 +92,14 @@ function generateColumnDef(col) {
+             parts.push(`DEFAULT '${JSON.stringify(col.defaultValue)}'`);
+         }
+     }
++    else if (col.fieldType === 'createdAt' || col.fieldType === 'updatedAt') {
++        // Auto-managed timestamp fields default to NOW() at the database level -
++        // matching the system created_at/updated_at columns and ColumnDef.fromField.
++        // Without this, a user-declared field.createdAt()/updatedAt() emits a
++        // NOT NULL column with no default, so an insert that doesn't set it
++        // explicitly fails the not-null constraint.
++        parts.push('DEFAULT NOW()');
++    }
+     return parts.join(' ');
+ }
+ /**

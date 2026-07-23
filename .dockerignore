@@ -1,0 +1,9 @@
+**/node_modules
+**/.zig-cache
+**/zig-out
+**/dist
+services/receiver-agent/dist
+captures
+out.log
+.git
+**/*.log
