@@ -601,7 +601,7 @@ button{font-family:inherit; color:inherit; cursor:pointer}
 <div class="areapop" id="areaPop" role="dialog" aria-label="Filter op gebied">
   <div class="search">
     <svg class="sicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
-    <input id="areaSearch" type="text" placeholder="Zoek provincie of veiligheidsregio…" autocomplete="off" spellcheck="false" />
+    <input id="areaSearch" type="text" placeholder="Zoek veiligheidsregio…" autocomplete="off" spellcheck="false" />
   </div>
   <div class="arealist" id="areaList"></div>
   <div class="foot">
@@ -633,8 +633,6 @@ const REGIONS = ["Groningen","Fryslân","Drenthe","IJsselland","Twente","Noord- 
   "Amsterdam-Amstelland","Gooi en Vechtstreek","Haaglanden","Hollands Midden","Rotterdam-Rijnmond",
   "Zuid-Holland-Zuid","Zeeland","Midden- en West-Brabant","Brabant-Noord","Brabant-Zuidoost",
   "Limburg-Noord","Zuid-Limburg","Flevoland"];
-const PROVINCES = ["Groningen","Fryslân","Drenthe","Overijssel","Flevoland","Gelderland","Utrecht",
-  "Noord-Holland","Zuid-Holland","Zeeland","Noord-Brabant","Limburg"];
 
 /* discipline glyph icons (small svg) */
 const GLYPHS = {
@@ -652,7 +650,7 @@ const state = {
   markers:new Map(),            // id -> leaflet marker
   discFilters:new Set(DISC_ORDER),
   urgentOnly:false,
-  areas:new Set(),              // keys "region:X" | "province:Y"
+  areas:new Set(),              // keys "region:X"
   showTests:false,              // test messages hidden by default
   selected:null,
   follow:false,                 // auto-pan OFF by default
@@ -822,7 +820,6 @@ function passesFilter(m){
   if(state.areas.size){
     let ok=false;
     if(m.region && state.areas.has("region:"+m.region)) ok=true;
-    if(!ok && m.province && state.areas.has("province:"+m.province)) ok=true;
     if(!ok) return false;
   }
   return true;
@@ -843,7 +840,6 @@ function detailHTML(m){
   add("Prioriteit", priLabel(m.priority)+(m.priority&&m.priority.scheme?" · "+m.priority.scheme:""));
   add("Discipline", dc.label);
   add("Veiligheidsregio", m.region);
-  add("Provincie", m.province);
   add("Gemeente", m.municipality);
   add("Woonplaats", m.city);
   add("Postcode", m.postcode);
@@ -1023,7 +1019,7 @@ const FILTERBAR_HTML =
   `<button class="fbtn urgent" type="button" data-role="urgent" aria-pressed="false" title="Alleen urgente meldingen (A1/P1)">
      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>Urgent
    </button>
-   <button class="fbtn area" type="button" data-role="area" aria-haspopup="dialog" title="Filter op provincie of veiligheidsregio">
+   <button class="fbtn area" type="button" data-role="area" aria-haspopup="dialog" title="Filter op veiligheidsregio">
      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>
      Gebied <span class="fcount" hidden>0</span>
    </button>
@@ -1056,17 +1052,15 @@ function resetFilters(){
 
 /* ============================================================ Area popover */
 function areaTallies(){
-  const tR={}, tP={};
+  const tR={};
   for(const id of state.order){ const m=state.byId.get(id); if(!m) continue;
     if(!state.showTests && m.is_test) continue;
-    if(m.region) tR[m.region]=(tR[m.region]||0)+1;
-    if(m.province) tP[m.province]=(tP[m.province]||0)+1; }
-  return {tR,tP};
+    if(m.region) tR[m.region]=(tR[m.region]||0)+1; }
+  return {tR};
 }
 function renderAreaList(q){
   const list=$("#areaList"); const nq=norm(q);
-  const {tR,tP}=areaTallies();
-  const provs=[...PROVINCES]; Object.keys(tP).forEach(p=>{ if(!provs.includes(p)) provs.push(p); });
+  const {tR}=areaTallies();
   const regs=[...REGIONS]; Object.keys(tR).forEach(r=>{ if(!regs.includes(r)) regs.push(r); });
   const check='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-11"/></svg>';
   let html="";
@@ -1080,7 +1074,6 @@ function renderAreaList(q){
         <span class="box">${check}</span><span>${esc(v)}</span>${c?`<span class="cnt">${c}</span>`:""}</div>`;
     });
   };
-  sec("Provincies", provs, "province", tP);
   sec("Veiligheidsregio's", regs, "region", tR);
   if(!html) html=`<div class="area-empty">Geen gebieden gevonden voor “${esc(q)}”.</div>`;
   list.innerHTML=html;
