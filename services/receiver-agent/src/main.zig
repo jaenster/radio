@@ -167,9 +167,9 @@ pub fn main() void {
     if (c.getenv("P2000_INGEST_URL")) |url| {
         const secret = c.getenv("P2000_INGEST_SECRET");
         const built = if (secret) |s|
-            std.fmt.bufPrintZ(&ingest_cmd_buf, "curl -sS -m 10 -o /dev/null -X POST -H 'content-type: application/json' -H 'authorization: Bearer {s}' --data-binary @- '{s}'", .{ std.mem.span(@as([*:0]const u8, @ptrCast(s))), std.mem.span(@as([*:0]const u8, @ptrCast(url))) })
+            std.fmt.bufPrintZ(&ingest_cmd_buf, "curl -sS -L --post301 --post302 --post303 -m 10 -o /dev/null -X POST -H 'content-type: application/json' -H 'authorization: Bearer {s}' --data-binary @- '{s}'", .{ std.mem.span(@as([*:0]const u8, @ptrCast(s))), std.mem.span(@as([*:0]const u8, @ptrCast(url))) })
         else
-            std.fmt.bufPrintZ(&ingest_cmd_buf, "curl -sS -m 10 -o /dev/null -X POST -H 'content-type: application/json' --data-binary @- '{s}'", .{std.mem.span(@as([*:0]const u8, @ptrCast(url)))});
+            std.fmt.bufPrintZ(&ingest_cmd_buf, "curl -sS -L --post301 --post302 --post303 -m 10 -o /dev/null -X POST -H 'content-type: application/json' --data-binary @- '{s}'", .{std.mem.span(@as([*:0]const u8, @ptrCast(url)))});
         if (built) |cmdz| {
             ingest_cmd = cmdz.ptr;
             log("agent: forwarding to ingest endpoint\n", .{});
