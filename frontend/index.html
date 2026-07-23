@@ -159,6 +159,13 @@ button{font-family:inherit; color:inherit; cursor:pointer}
 :root[data-theme="light"] .iconbtn .sun{display:none}
 :root[data-theme="light"] .iconbtn .moon{display:block}
 
+/* bell (notifications) */
+.iconbtn.bell{position:relative}
+.iconbtn.bell.on{color:var(--disc-ambulance); border-color:color-mix(in srgb, var(--disc-ambulance) 45%, var(--hair-strong))}
+.iconbtn.bell.on::after{content:""; position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%;
+  background:var(--disc-ambulance); box-shadow:0 0 8px var(--disc-ambulance), 0 0 0 2px var(--panel-solid)}
+.iconbtn.bell.denied{color:var(--pr1)}
+
 /* connection dot */
 .conn{display:inline-flex; align-items:center; gap:8px; padding:0 11px 0 10px; height:38px;
   border-radius:11px; border:1px solid var(--hair); background:var(--panel-2);
@@ -213,6 +220,63 @@ button{font-family:inherit; color:inherit; cursor:pointer}
 .chip[aria-pressed="false"] .swatch{box-shadow:none; opacity:.7}
 .chip .cnt{font-size:10.5px; color:var(--txt-3); font-variant-numeric:tabular-nums; min-width:1ch; text-align:right}
 
+/* ---- filter bar (urgent / area / tests / reset) ---- */
+.filterbar{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:10px}
+.fbtn{
+  display:inline-flex; align-items:center; gap:6px; padding:6px 11px;
+  border-radius:999px; border:1px solid var(--hair); background:var(--chip);
+  color:var(--txt-2); font-size:12px; font-weight:600; letter-spacing:.01em;
+  transition:.18s var(--ease); user-select:none;
+}
+.fbtn:hover{border-color:var(--hair-strong); color:var(--txt)}
+.fbtn svg{width:13px; height:13px; opacity:.85; flex:0 0 auto}
+.fbtn.on{color:var(--txt); background:var(--chip-on); border-color:var(--hair-strong)}
+.fbtn.urgent.on{background:color-mix(in srgb, var(--pr1) 20%, var(--chip)); border-color:color-mix(in srgb, var(--pr1) 55%, var(--hair-strong)); color:var(--txt)}
+.fbtn.urgent.on svg{color:var(--pr1); opacity:1}
+.fbtn.tests.on{background:color-mix(in srgb, var(--pr2) 18%, var(--chip)); border-color:color-mix(in srgb, var(--pr2) 50%, var(--hair-strong)); color:var(--txt)}
+.fbtn .fcount{font-size:10px; font-weight:700; background:var(--chip-on); border-radius:99px; padding:1px 6px; font-variant-numeric:tabular-nums; margin-left:1px}
+.fbtn.reset{margin-left:auto; color:var(--txt-3); background:transparent; border-color:transparent}
+.fbtn.reset:hover{color:var(--pr1)}
+.fbtn[hidden]{display:none}
+
+/* area popover */
+.areapop{
+  position:fixed; z-index:2000; width:320px; max-width:calc(100vw - 24px);
+  background:var(--panel-solid); border:1px solid var(--hair-strong); border-radius:var(--r-lg);
+  box-shadow:var(--sh-pop); display:flex; flex-direction:column; overflow:hidden;
+  opacity:0; pointer-events:none; transition:opacity .18s var(--ease);
+}
+.areapop.show{opacity:1; pointer-events:auto}
+.areapop .search{padding:11px 12px; border-bottom:1px solid var(--hair); position:relative}
+.areapop .search input{
+  width:100%; padding:9px 11px 9px 34px; border-radius:10px; border:1px solid var(--hair);
+  background:var(--panel-2); color:var(--txt); font-family:inherit; font-size:13px; outline:none;
+  transition:border-color .18s var(--ease);
+}
+.areapop .search input:focus{border-color:var(--hair-strong)}
+.areapop .search .sicon{position:absolute; left:23px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--txt-3); pointer-events:none}
+.arealist{max-height:min(340px, 52vh); overflow-y:auto; padding:6px}
+.area-sec{font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--txt-3); padding:9px 9px 5px}
+.area-item{
+  display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:9px;
+  font-size:13px; color:var(--txt-2); cursor:pointer; transition:.12s var(--ease);
+}
+.area-item:hover{background:var(--card-hover); color:var(--txt)}
+.area-item .box{width:16px; height:16px; border-radius:5px; border:1.5px solid var(--hair-strong); flex:0 0 auto; display:grid; place-items:center; transition:.15s var(--ease)}
+.area-item .box svg{width:11px; height:11px; opacity:0; color:#fff}
+.area-item[aria-selected="true"]{color:var(--txt); font-weight:600}
+.area-item[aria-selected="true"] .box{background:var(--disc-politie); border-color:var(--disc-politie)}
+.area-item[aria-selected="true"] .box svg{opacity:1}
+.area-item .cnt{margin-left:auto; font-size:10.5px; color:var(--txt-3); font-variant-numeric:tabular-nums}
+.areapop .foot{display:flex; justify-content:space-between; align-items:center; padding:9px 12px; border-top:1px solid var(--hair)}
+.areapop .foot button{font-size:12px; font-weight:600; background:none; border:0; color:var(--txt-2); padding:4px 6px; border-radius:7px}
+.areapop .foot button:hover{color:var(--txt)}
+.areapop .foot .done{color:var(--disc-politie)}
+.area-empty{padding:22px; text-align:center; color:var(--txt-3); font-size:12.5px}
+.areapop-backdrop{position:fixed; inset:0; z-index:1999; display:none}
+.areapop-backdrop.show{display:block}
+
+/* ============================== Main region ============================== */
 .list{flex:1 1 auto; min-height:0; overflow-y:auto; overflow-x:hidden; padding:10px 11px 24px}
 .list.feedlist{padding:16px max(16px, env(safe-area-inset-left)) 40px}
 
@@ -230,17 +294,19 @@ button{font-family:inherit; color:inherit; cursor:pointer}
 
 /* ============================== Message card ============================== */
 .card{
-  position:relative; display:block; width:100%; text-align:left;
+  position:relative; display:block; width:100%; text-align:left; cursor:default;
   border:1px solid var(--hair); border-radius:var(--r-md);
   background:var(--panel-2); padding:12px 13px 12px 15px; margin-bottom:9px;
-  transition:background .2s var(--ease), border-color .2s var(--ease), transform .12s var(--ease), box-shadow .2s var(--ease);
+  transition:background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease);
   overflow:hidden;
 }
 .card::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--c, var(--disc-other))}
 .card:hover{background:var(--card-hover); border-color:var(--hair-strong)}
-.card:active{transform:scale(.995)}
 .card.sel{background:var(--sel); border-color:color-mix(in srgb, var(--disc-politie) 45%, var(--hair-strong)); box-shadow:0 0 0 1px color-mix(in srgb, var(--disc-politie) 30%, transparent)}
-.card .top{display:flex; align-items:center; gap:8px; margin-bottom:7px}
+.card-main{display:block; cursor:pointer; outline:none}
+.card-main:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb, var(--disc-politie) 55%, transparent); border-radius:8px}
+.card-main:active{transform:scale(.996)}
+.card .top{display:flex; align-items:center; gap:8px; margin-bottom:6px}
 
 .badge{
   font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.02em;
@@ -252,11 +318,18 @@ button{font-family:inherit; color:inherit; cursor:pointer}
 .badge.p3{background:linear-gradient(180deg, #62c8ff, var(--pr3)); color:#04202e}
 .badge.pm{background:var(--chip-on); color:var(--txt-2); box-shadow:inset 0 0 0 1px var(--hair)}
 
-.disc-tag{font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--c, var(--disc-other))}
+.disc-tag{font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--c, var(--disc-other)); flex:0 0 auto}
 .card .city{font-size:13px; font-weight:650; color:var(--txt); letter-spacing:.01em;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1 1 auto}
 .card .city.nocity{color:var(--txt-3); font-weight:600}
 .card .time{margin-left:auto; font-size:11.5px; color:var(--txt-3); font-variant-numeric:tabular-nums; white-space:nowrap; flex:0 0 auto}
+
+/* sub-line: region · municipality · postcode */
+.card-sub{display:flex; align-items:center; gap:6px; margin:0 0 7px; flex-wrap:wrap; font-size:11px; color:var(--txt-3); line-height:1.3}
+.card-sub .rg{color:var(--txt-2); font-weight:600}
+.card-sub .sep{opacity:.45}
+.testtag{font-size:9px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--pr2);
+  border:1px solid color-mix(in srgb,var(--pr2) 45%,transparent); border-radius:5px; padding:1px 5px; line-height:1.4}
 
 .card .body{font-size:13px; line-height:1.5; color:var(--txt-2); word-break:break-word}
 .feed-inner .card .body{font-size:14px; color:var(--txt)}
@@ -265,6 +338,22 @@ button{font-family:inherit; color:inherit; cursor:pointer}
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .pin{font-size:10.5px; color:var(--txt-3); display:inline-flex; align-items:center; gap:4px}
 .pin svg{width:11px; height:11px; opacity:.8}
+.expandbtn{margin-left:auto; background:none; border:0; color:var(--txt-3); display:inline-flex; align-items:center; gap:4px;
+  font-size:10.5px; font-weight:600; padding:2px 4px; border-radius:6px; transition:color .18s var(--ease)}
+.expandbtn:hover{color:var(--txt)}
+.expandbtn svg{width:13px; height:13px; transition:transform .22s var(--ease)}
+.card.expanded .expandbtn svg{transform:rotate(180deg)}
+
+/* progressive-disclosure detail */
+.card-detail{display:none; margin-top:11px; padding-top:11px; border-top:1px solid var(--hair)}
+.card.expanded .card-detail{display:block; animation:cardIn .28s var(--ease)}
+.drow{display:flex; gap:10px; font-size:11.5px; padding:3px 0}
+.drow .k{color:var(--txt-3); min-width:92px; flex:0 0 auto}
+.drow .v{color:var(--txt-2); word-break:break-word}
+.draw{margin-top:9px; font-family:var(--mono); font-size:10.5px; line-height:1.5; color:var(--txt-3);
+  background:var(--panel-2); border:1px solid var(--hair); border-radius:8px; padding:8px 10px;
+  white-space:pre-wrap; word-break:break-word; max-height:160px; overflow:auto}
+
 .card.enter{animation:cardIn .5s var(--ease)}
 @keyframes cardIn{from{opacity:0; transform:translateY(-8px) scale(.99)} to{opacity:1; transform:none}}
 .card.flash::after{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
@@ -327,8 +416,11 @@ button{font-family:inherit; color:inherit; cursor:pointer}
 .leaflet-popup-close-button{color:var(--txt-3)!important; padding:9px 9px 0 0!important; font-size:18px!important}
 .leaflet-popup-close-button:hover{color:var(--txt)!important}
 .pop{padding:13px 14px 14px}
-.pop .top{display:flex; align-items:center; gap:8px; margin-bottom:9px}
+.pop .top{display:flex; align-items:center; gap:8px; margin-bottom:6px}
 .pop .city{font-size:14px; font-weight:700}
+.pop-sub{font-size:11px; color:var(--txt-3); margin-bottom:9px; display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.pop-sub .rg{color:var(--txt-2); font-weight:600}
+.pop-sub .sep{opacity:.45}
 .pop .body{font-size:13px; line-height:1.5; color:var(--txt-2); margin-bottom:9px}
 .pop .caps{font-family:var(--mono); font-size:10.5px; color:var(--txt-3)}
 .pop .foot{display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:9px; border-top:1px solid var(--hair)}
@@ -372,10 +464,10 @@ button{font-family:inherit; color:inherit; cursor:pointer}
 
   /* bottom sheet */
   .side{
-    position:absolute; left:0; right:0; bottom:0; top:auto; width:auto; height:52vh; height:52dvh;
+    position:absolute; left:0; right:0; bottom:0; top:auto; width:auto; height:58vh; height:58dvh;
     flex:none; border-left:none; border-top:1px solid var(--hair-strong);
     border-radius:20px 20px 0 0; box-shadow:0 -12px 40px rgba(0,0,0,.5);
-    transform:translateY(calc(52dvh - 116px)); transition:transform .38s var(--ease);
+    transform:translateY(calc(58dvh - 168px)); transition:transform .38s var(--ease);
     touch-action:none;
   }
   .side.open{transform:translateY(0)}
@@ -436,6 +528,10 @@ button{font-family:inherit; color:inherit; cursor:pointer}
       <span class="dot"></span><span class="txt" id="connTxt">Verbinden…</span>
     </div>
 
+    <button class="iconbtn bell" id="bellBtn" title="Meldingen" aria-label="Browsermeldingen aan/uit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+    </button>
+
     <button class="iconbtn" id="themeBtn" title="Thema wisselen" aria-label="Thema wisselen">
       <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
       <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
@@ -454,9 +550,10 @@ button{font-family:inherit; color:inherit; cursor:pointer}
           <div class="side-head" id="sheetHead">
             <div class="row">
               <div class="side-title">Live feed <span class="count" id="sideCount">0</span></div>
-              <button class="followbtn on" id="followBtn" title="Kaart volgt nieuwe meldingen"><span class="fdot"></span>Volgen</button>
+              <button class="followbtn" id="followBtn" title="Kaart volgt nieuwe meldingen"><span class="fdot"></span>Volgen</button>
             </div>
             <div class="chips" id="chipsMap"></div>
+            <div class="filterbar" id="fbarMap"></div>
           </div>
           <div class="list" id="mapList">
             <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
@@ -474,6 +571,7 @@ button{font-family:inherit; color:inherit; cursor:pointer}
             <div class="side-title"><span class="count" id="feedCount">0</span> zichtbaar</div>
           </div>
           <div class="chips" id="chipsFeed"></div>
+          <div class="filterbar" id="fbarFeed"></div>
         </div>
         <div class="feed-scroll">
           <div class="feed-inner">
@@ -498,6 +596,20 @@ button{font-family:inherit; color:inherit; cursor:pointer}
   </div>
 </div>
 
+<!-- Area filter popover -->
+<div class="areapop-backdrop" id="areaBackdrop"></div>
+<div class="areapop" id="areaPop" role="dialog" aria-label="Filter op gebied">
+  <div class="search">
+    <svg class="sicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+    <input id="areaSearch" type="text" placeholder="Zoek provincie of veiligheidsregio…" autocomplete="off" spellcheck="false" />
+  </div>
+  <div class="arealist" id="areaList"></div>
+  <div class="foot">
+    <button id="areaClear">Selectie wissen</button>
+    <button id="areaClose" class="done">Klaar</button>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin=""></script>
@@ -515,6 +627,15 @@ const DISC_ORDER = ["ambulance","brandweer","politie","knrm","other"];
 const MAX_MSG = 1000;
 const NL_CENTER = [52.15, 5.3];
 
+/* stable area lists (populate dropdown before data arrives) */
+const REGIONS = ["Groningen","Fryslân","Drenthe","IJsselland","Twente","Noord- en Oost-Gelderland",
+  "Gelderland-Midden","Gelderland-Zuid","Utrecht","Noord-Holland-Noord","Zaanstreek-Waterland","Kennemerland",
+  "Amsterdam-Amstelland","Gooi en Vechtstreek","Haaglanden","Hollands Midden","Rotterdam-Rijnmond",
+  "Zuid-Holland-Zuid","Zeeland","Midden- en West-Brabant","Brabant-Noord","Brabant-Zuidoost",
+  "Limburg-Noord","Zuid-Limburg","Flevoland"];
+const PROVINCES = ["Groningen","Fryslân","Drenthe","Overijssel","Flevoland","Gelderland","Utrecht",
+  "Noord-Holland","Zuid-Holland","Zeeland","Noord-Brabant","Limburg"];
+
 /* discipline glyph icons (small svg) */
 const GLYPHS = {
   ambulance:'<path d="M12 6v12M6 12h12" stroke-width="3"/>',
@@ -526,20 +647,45 @@ const GLYPHS = {
 
 /* ============================================================ State */
 const state = {
-  byId:new Map(),          // id -> msg
-  order:[],                // ids newest-first
-  markers:new Map(),       // id -> leaflet marker
-  filters:new Set(DISC_ORDER),
+  byId:new Map(),               // id -> msg
+  order:[],                     // ids newest-first
+  markers:new Map(),            // id -> leaflet marker
+  discFilters:new Set(DISC_ORDER),
+  urgentOnly:false,
+  areas:new Set(),              // keys "region:X" | "province:Y"
+  showTests:false,              // test messages hidden by default
   selected:null,
-  follow:true,
+  follow:false,                 // auto-pan OFF by default
+  notify:false,
   view:"map",
   lastPan:0,
-  didInitialFit:false,
 };
+
+/* ============================================================ Prefs */
+const PREFS_KEY="p2000-prefs";
+function savePrefs(){
+  try{ localStorage.setItem(PREFS_KEY, JSON.stringify({
+    disc:[...state.discFilters], urgentOnly:state.urgentOnly, areas:[...state.areas],
+    showTests:state.showTests, follow:state.follow, notify:state.notify
+  })); }catch(e){}
+}
+function loadPrefs(){
+  try{
+    const p=JSON.parse(localStorage.getItem(PREFS_KEY)||"null"); if(!p) return;
+    if(Array.isArray(p.disc)){ const s=new Set(p.disc.filter(d=>DISCIPLINES[d])); state.discFilters = s.size ? s : new Set(DISC_ORDER); }
+    state.urgentOnly=!!p.urgentOnly;
+    if(Array.isArray(p.areas)) state.areas=new Set(p.areas);
+    state.showTests=!!p.showTests;
+    state.follow=!!p.follow;
+    state.notify=!!p.notify;
+  }catch(e){}
+}
 
 /* ============================================================ Utils */
 const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
 const esc = s => (s==null?"":String(s)).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 function relTime(ms){
   const d = Date.now()-ms; const s = Math.round(d/1000);
   if (s<0) return "nu";
@@ -558,7 +704,7 @@ function priLabel(p){
   if(p && p.level!=null) return "P"+p.level;
   return "—";
 }
-function discColorVar(d){ return (DISCIPLINES[d]||DISCIPLINES.other).color; }
+function cssId(id){ return id.replace(/[^a-zA-Z0-9_-]/g,"_"); }
 
 /* ============================================================ Map */
 const map = L.map("map",{zoomControl:false, attributionControl:true, preferCanvas:false, worldCopyJump:true})
@@ -574,7 +720,6 @@ const cluster = L.markerClusterGroup({
   iconCreateFunction(c){
     const n=c.getChildCount();
     const big = n>=25 ? " big":"";
-    // dominant discipline color
     const tally={};
     c.getAllChildMarkers().forEach(m=>{const d=m.options._disc||"other"; tally[d]=(tally[d]||0)+1;});
     let best="politie", bv=-1; for(const k in tally){ if(tally[k]>bv){bv=tally[k];best=k;} }
@@ -584,7 +729,6 @@ const cluster = L.markerClusterGroup({
   }
 });
 map.addLayer(cluster);
-map.on("movestart", ()=>{ /* user moved: keep follow but reset pan throttle gently */ });
 
 /* ============================================================ Marker */
 function makeMarker(m){
@@ -601,13 +745,23 @@ function makeMarker(m){
   mk.on("click", ()=>select(m.id,{fromMap:true}));
   return mk;
 }
+function subBits(m, forPop){
+  const bits=[];
+  if(m.region) bits.push(`<span class="rg">${esc(m.region)}</span>`);
+  if(m.municipality && m.municipality!==m.city) bits.push(`<span>${esc(m.municipality)}</span>`);
+  if(m.postcode) bits.push(`<span>${esc(m.postcode)}</span>`);
+  if(!forPop && m.is_test) bits.push(`<span class="testtag">Test</span>`);
+  return bits;
+}
 function popupHTML(m){
   const dc = DISCIPLINES[m.discipline]||DISCIPLINES.other;
+  const bits = subBits(m, true);
   return `<div class="pop" style="--c:${dc.raw}">
     <div class="top">
       <span class="badge ${priClass(m.priority)}">${esc(priLabel(m.priority))}</span>
       <span class="city">${m.city?esc(m.city):"Onbekend"}</span>
     </div>
+    ${bits.length?`<div class="pop-sub">${bits.join('<span class="sep">·</span>')}</div>`:""}
     <div class="body">${esc(m.body||m.raw||"")}</div>
     ${m.capcodes&&m.capcodes.length?`<div class="caps">${esc(m.capcodes.join("  ·  "))}</div>`:""}
     <div class="foot"><span class="d">${esc(dc.label)}</span><span class="t" data-ts="${m.ts_ms}">${relTime(m.ts_ms)}</span></div>
@@ -621,16 +775,18 @@ function normalize(m){
   let ts = Number(m.ts_ms);
   if(!isFinite(ts) || ts<=0){ ts = m.received_at ? Date.parse(m.received_at) : Date.now(); }
   const geo = (m.geo && isFinite(m.geo.lat) && isFinite(m.geo.lon)) ? {lat:+m.geo.lat, lon:+m.geo.lon} : null;
+  const priority = m.priority || {raw:null,scheme:null,level:null};
+  const urgent = (m.urgent!=null) ? !!m.urgent : (priority.level===1);
   return {
     id:String(m.id), ts_ms:ts, received_at:m.received_at||null,
     capcodes:Array.isArray(m.capcodes)?m.capcodes:[],
-    body:m.body||"", raw:m.raw||"", discipline:disc,
-    priority:m.priority||{raw:null,scheme:null,level:null},
-    city:m.city||null, geo
+    body:m.body||"", raw:m.raw||"", discipline:disc, priority, urgent,
+    is_test:!!m.is_test,
+    city:m.city||null, municipality:m.municipality||null, province:m.province||null,
+    region:m.region||null, postcode:m.postcode||null, geo
   };
 }
 function insertSorted(id, ts){
-  // newest-first; new live items are usually newest -> unshift fast path
   const ord = state.order;
   if(ord.length===0 || ts >= state.byId.get(ord[0]).ts_ms){ ord.unshift(id); return 0; }
   let lo=0, hi=ord.length;
@@ -642,7 +798,10 @@ function ingest(raw, live){
   if(state.byId.has(m.id)) return null; // dedupe
   state.byId.set(m.id, m);
   const idx = insertSorted(m.id, m.ts_ms);
-  if(m.geo){ const mk = makeMarker(m); state.markers.set(m.id, mk); cluster.addLayer(mk); }
+  if(m.geo){
+    const mk = makeMarker(m); state.markers.set(m.id, mk);
+    if(passesFilter(m)) cluster.addLayer(mk);
+  }
   // cap
   while(state.order.length>MAX_MSG){
     const drop = state.order.pop();
@@ -654,42 +813,90 @@ function ingest(raw, live){
   }
   return {m, idx};
 }
-function cssId(id){ return id.replace(/[^a-zA-Z0-9_-]/g,"_"); }
+
+/* ============================================================ Filtering */
+function passesFilter(m){
+  if(!state.showTests && m.is_test) return false;
+  if(!state.discFilters.has(m.discipline)) return false;
+  if(state.urgentOnly && !m.urgent) return false;
+  if(state.areas.size){
+    let ok=false;
+    if(m.region && state.areas.has("region:"+m.region)) ok=true;
+    if(!ok && m.province && state.areas.has("province:"+m.province)) ok=true;
+    if(!ok) return false;
+  }
+  return true;
+}
+function filtersActive(){
+  return state.discFilters.size!==DISC_ORDER.length || state.urgentOnly || state.areas.size>0 || state.showTests;
+}
+function afterFilterChange(){
+  syncChips(); syncFilterBar(); updateChipCounts();
+  rebuildLists(); applyMarkerFilter(); savePrefs();
+}
 
 /* ============================================================ Card DOM */
+function detailHTML(m){
+  const rows=[];
+  const add=(k,v)=>{ if(v) rows.push(`<div class="drow"><span class="k">${k}</span><span class="v">${esc(v)}</span></div>`); };
+  const dc=DISCIPLINES[m.discipline]||DISCIPLINES.other;
+  add("Prioriteit", priLabel(m.priority)+(m.priority&&m.priority.scheme?" · "+m.priority.scheme:""));
+  add("Discipline", dc.label);
+  add("Veiligheidsregio", m.region);
+  add("Provincie", m.province);
+  add("Gemeente", m.municipality);
+  add("Woonplaats", m.city);
+  add("Postcode", m.postcode);
+  if(m.geo) add("Coördinaten", m.geo.lat.toFixed(5)+", "+m.geo.lon.toFixed(5));
+  add("Tijd", new Date(m.ts_ms).toLocaleString("nl-NL"));
+  if(m.is_test) add("Type", "Testmelding / oefening");
+  if(m.capcodes.length) add("Capcodes", m.capcodes.join("   "));
+  let out=rows.join("");
+  if(m.raw) out+=`<div class="draw">${esc(m.raw)}</div>`;
+  return out;
+}
 function cardEl(m, prefix){
   const dc = DISCIPLINES[m.discipline]||DISCIPLINES.other;
-  const el = document.createElement("button");
+  const el = document.createElement("div");
   el.className="card"; el.id=prefix+"_"+cssId(m.id);
   el.style.setProperty("--c", dc.raw);
   el.dataset.id=m.id; el.dataset.disc=m.discipline;
-  el.setAttribute("type","button");
+  const bits = subBits(m, false);
   el.innerHTML =
-    `<div class="top">
-       <span class="badge ${priClass(m.priority)}">${esc(priLabel(m.priority))}</span>
-       <span class="disc-tag">${esc(dc.label)}</span>
-       <span class="city${m.city?"":" nocity"}">${m.city?esc(m.city):"Locatie onbekend"}</span>
-       <span class="time rel" data-ts="${m.ts_ms}">${relTime(m.ts_ms)}</span>
+    `<div class="card-main" role="button" tabindex="0">
+       <div class="top">
+         <span class="badge ${priClass(m.priority)}">${esc(priLabel(m.priority))}</span>
+         <span class="disc-tag">${esc(dc.label)}</span>
+         <span class="city${m.city?"":" nocity"}">${m.city?esc(m.city):"Locatie onbekend"}</span>
+         <span class="time rel" data-ts="${m.ts_ms}">${relTime(m.ts_ms)}</span>
+       </div>
+       ${bits.length?`<div class="card-sub">${bits.join('<span class="sep">·</span>')}</div>`:""}
+       <div class="body">${esc(m.body||m.raw||"—")}</div>
+       <div class="meta">
+         ${m.geo?'<span class="pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>op kaart</span>':""}
+         ${m.capcodes.length?`<span class="caps">${esc(m.capcodes.slice(0,6).join(" · "))}${m.capcodes.length>6?" …":""}</span>`:""}
+         <button class="expandbtn" type="button" aria-expanded="false">Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+       </div>
      </div>
-     <div class="body">${esc(m.body||m.raw||"—")}</div>
-     <div class="meta">
-       ${m.geo?'<span class="pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>op kaart</span>':""}
-       ${m.capcodes&&m.capcodes.length?`<span class="caps">${esc(m.capcodes.slice(0,6).join(" · "))}${m.capcodes.length>6?" …":""}</span>`:""}
-     </div>`;
-  el.addEventListener("click", ()=>{
-    if(state.view==="feed"){ // jump to map
-      select(m.id,{focus:true, switchToMap:!!m.geo});
-    } else {
-      select(m.id,{focus:true});
-    }
+     <div class="card-detail">${detailHTML(m)}</div>`;
+  const main = el.querySelector(".card-main");
+  const onSel=()=>{
+    if(state.view==="feed") select(m.id,{focus:true, switchToMap:!!m.geo});
+    else select(m.id,{focus:true});
+  };
+  main.addEventListener("click", onSel);
+  main.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); onSel(); } });
+  const eb = el.querySelector(".expandbtn");
+  eb.addEventListener("click", e=>{
+    e.stopPropagation();
+    const open = el.classList.toggle("expanded");
+    eb.setAttribute("aria-expanded", open?"true":"false");
   });
   return el;
 }
-function passesFilter(m){ return state.filters.has(m.discipline); }
 
 /* ============================================================ List render */
 const mapList = $("#mapList"), feedList = $("#feedList");
-let listsInit=false;
 function clearSkeletons(){
   mapList.querySelectorAll(".skeleton").forEach(s=>s.remove());
   feedList.querySelectorAll(".skeleton").forEach(s=>s.remove());
@@ -712,20 +919,19 @@ function rebuildLists(){
   }
   mapList.innerHTML=""; mapList.appendChild(mf);
   feedList.innerHTML=""; feedList.appendChild(ff);
-  const me=ensureListEmpty(mapList,"Geen meldingen in dit filter."); me.classList.toggle("show", mcount===0);
-  const fe=ensureListEmpty(feedList,"Geen meldingen in dit filter."); fe.classList.toggle("show", fcount===0);
+  const msg = filtersActive() ? "Geen meldingen die aan de filters voldoen." : "Nog geen meldingen.";
+  const me=ensureListEmpty(mapList,msg); me.classList.toggle("show", mcount===0);
+  const fe=ensureListEmpty(feedList,msg); fe.classList.toggle("show", fcount===0);
   $("#sideCount").textContent=mcount; $("#feedCount").textContent=fcount;
   if(state.selected) markSelectedDom();
 }
 function prependCard(m){
   clearSkeletons();
   if(!passesFilter(m)) { updateVisibleCounts(); return; }
-  // remove any list-empty
   mapList.querySelectorAll(".list-empty.show").forEach(e=>e.classList.remove("show"));
   feedList.querySelectorAll(".list-empty.show").forEach(e=>e.classList.remove("show"));
   const fc=cardEl(m,"f"), mc=cardEl(m,"m");
   fc.classList.add("enter","flash"); mc.classList.add("enter","flash");
-  // insert respecting sort: since ingest returns idx; but live newest -> prepend at top
   feedList.insertBefore(fc, feedList.firstChild);
   mapList.insertBefore(mc, mapList.firstChild);
   setTimeout(()=>{ fc.classList.remove("flash"); mc.classList.remove("flash"); }, 1700);
@@ -742,7 +948,6 @@ function markSelectedDom(){
   if(!state.selected) return;
   const cid=cssId(state.selected);
   ["m_","f_"].forEach(p=>{ const el=document.getElementById(p+cid); if(el) el.classList.add("sel"); });
-  // marker highlight
   state.markers.forEach((mk,id)=>{
     const node=mk.getElement&&mk.getElement();
     const inner=node&&node.querySelector(".mk");
@@ -772,28 +977,28 @@ function select(id, opts={}){
   }
 }
 
-/* ============================================================ Chips */
-function buildChips(container, mirror){
+/* ============================================================ Discipline chips */
+function buildChips(container){
   container.innerHTML="";
   DISC_ORDER.forEach(d=>{
     const dc=DISCIPLINES[d];
     const b=document.createElement("button");
     b.className="chip"; b.style.setProperty("--c",dc.raw);
-    b.setAttribute("aria-pressed", state.filters.has(d)?"true":"false");
+    b.setAttribute("aria-pressed", state.discFilters.has(d)?"true":"false");
     b.dataset.disc=d;
     b.innerHTML=`<span class="swatch"></span>${dc.label} <span class="cnt" data-cnt="${d}">0</span>`;
-    b.addEventListener("click",()=>toggleFilter(d));
+    b.addEventListener("click",()=>toggleDiscipline(d));
     container.appendChild(b);
   });
 }
-function toggleFilter(d){
-  if(state.filters.has(d)){ if(state.filters.size>1) state.filters.delete(d); else return; }
-  else state.filters.add(d);
-  syncChips(); rebuildLists(); applyMarkerFilter();
+function toggleDiscipline(d){
+  if(state.discFilters.has(d)){ if(state.discFilters.size>1) state.discFilters.delete(d); else return; }
+  else state.discFilters.add(d);
+  afterFilterChange();
 }
 function syncChips(){
   document.querySelectorAll(".chip").forEach(c=>{
-    c.setAttribute("aria-pressed", state.filters.has(c.dataset.disc)?"true":"false");
+    c.setAttribute("aria-pressed", state.discFilters.has(c.dataset.disc)?"true":"false");
   });
 }
 function applyMarkerFilter(){
@@ -801,15 +1006,123 @@ function applyMarkerFilter(){
   const add=[];
   for(const id of state.order){
     const m=state.byId.get(id);
-    if(m&&m.geo&&passesFilter(m)){ let mk=state.markers.get(id); if(mk) add.push(mk); }
+    if(m&&m.geo&&passesFilter(m)){ const mk=state.markers.get(id); if(mk) add.push(mk); }
   }
   if(add.length) cluster.addLayers(add);
 }
 function updateChipCounts(){
   const t={}; DISC_ORDER.forEach(d=>t[d]=0);
-  for(const id of state.order){ const m=state.byId.get(id); if(m) t[m.discipline]=(t[m.discipline]||0)+1; }
+  for(const id of state.order){ const m=state.byId.get(id); if(!m) continue;
+    if(!state.showTests && m.is_test) continue;
+    t[m.discipline]=(t[m.discipline]||0)+1; }
   document.querySelectorAll("[data-cnt]").forEach(el=>{ el.textContent=t[el.dataset.cnt]||0; });
 }
+
+/* ============================================================ Filter bar */
+const FILTERBAR_HTML =
+  `<button class="fbtn urgent" type="button" data-role="urgent" aria-pressed="false" title="Alleen urgente meldingen (A1/P1)">
+     <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>Urgent
+   </button>
+   <button class="fbtn area" type="button" data-role="area" aria-haspopup="dialog" title="Filter op provincie of veiligheidsregio">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>
+     Gebied <span class="fcount" hidden>0</span>
+   </button>
+   <button class="fbtn tests" type="button" data-role="tests" aria-pressed="false" title="Toon testmeldingen">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5.5L5.2 17A2 2 0 0 0 7 20h10a2 2 0 0 0 1.8-3L14 8.5V3"/></svg>Tests
+   </button>
+   <button class="fbtn reset" type="button" data-role="reset" hidden title="Alle filters wissen">Reset</button>`;
+function buildFilterBar(container){
+  container.innerHTML=FILTERBAR_HTML;
+  container.querySelector('[data-role=urgent]').addEventListener("click",()=>{ state.urgentOnly=!state.urgentOnly; afterFilterChange(); });
+  container.querySelector('[data-role=tests]').addEventListener("click",()=>{ state.showTests=!state.showTests; afterFilterChange(); });
+  container.querySelector('[data-role=area]').addEventListener("click",e=>openAreaPop(e.currentTarget));
+  container.querySelector('[data-role=reset]').addEventListener("click",resetFilters);
+}
+function syncFilterBar(){
+  const active=filtersActive();
+  document.querySelectorAll(".fbtn.urgent").forEach(b=>{ b.classList.toggle("on",state.urgentOnly); b.setAttribute("aria-pressed",state.urgentOnly?"true":"false"); });
+  document.querySelectorAll(".fbtn.tests").forEach(b=>{ b.classList.toggle("on",state.showTests); b.setAttribute("aria-pressed",state.showTests?"true":"false"); });
+  document.querySelectorAll(".fbtn.area").forEach(b=>{
+    b.classList.toggle("on",state.areas.size>0);
+    const c=b.querySelector(".fcount"); if(c){ c.textContent=state.areas.size; c.hidden=state.areas.size===0; }
+  });
+  document.querySelectorAll(".fbtn.reset").forEach(b=>{ b.hidden=!active; });
+}
+function resetFilters(){
+  state.discFilters=new Set(DISC_ORDER);
+  state.urgentOnly=false; state.areas.clear(); state.showTests=false;
+  afterFilterChange();
+}
+
+/* ============================================================ Area popover */
+function areaTallies(){
+  const tR={}, tP={};
+  for(const id of state.order){ const m=state.byId.get(id); if(!m) continue;
+    if(!state.showTests && m.is_test) continue;
+    if(m.region) tR[m.region]=(tR[m.region]||0)+1;
+    if(m.province) tP[m.province]=(tP[m.province]||0)+1; }
+  return {tR,tP};
+}
+function renderAreaList(q){
+  const list=$("#areaList"); const nq=norm(q);
+  const {tR,tP}=areaTallies();
+  const provs=[...PROVINCES]; Object.keys(tP).forEach(p=>{ if(!provs.includes(p)) provs.push(p); });
+  const regs=[...REGIONS]; Object.keys(tR).forEach(r=>{ if(!regs.includes(r)) regs.push(r); });
+  const check='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-11"/></svg>';
+  let html="";
+  const sec=(title, arr, type, tally)=>{
+    const items=arr.filter(v=>!nq||norm(v).includes(nq));
+    if(!items.length) return;
+    html+=`<div class="area-sec">${title}</div>`;
+    items.forEach(v=>{
+      const key=type+":"+v; const on=state.areas.has(key); const c=tally[v]||0;
+      html+=`<div class="area-item" role="button" tabindex="0" data-key="${esc(key)}" aria-selected="${on?"true":"false"}">
+        <span class="box">${check}</span><span>${esc(v)}</span>${c?`<span class="cnt">${c}</span>`:""}</div>`;
+    });
+  };
+  sec("Provincies", provs, "province", tP);
+  sec("Veiligheidsregio's", regs, "region", tR);
+  if(!html) html=`<div class="area-empty">Geen gebieden gevonden voor “${esc(q)}”.</div>`;
+  list.innerHTML=html;
+  list.querySelectorAll(".area-item").forEach(it=>{
+    const key=it.dataset.key;
+    const act=()=>toggleArea(key);
+    it.addEventListener("click",act);
+    it.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); act(); } });
+  });
+}
+function toggleArea(key){
+  if(state.areas.has(key)) state.areas.delete(key); else state.areas.add(key);
+  afterFilterChange();
+  renderAreaList($("#areaSearch").value);
+}
+function positionAreaPop(anchor){
+  const pop=$("#areaPop");
+  if(window.innerWidth<=560){
+    pop.style.left="50%"; pop.style.top="auto"; pop.style.bottom="14px";
+    pop.style.transform="translateX(-50%)"; pop.style.width="min(360px, calc(100vw - 24px))";
+    return;
+  }
+  const r=anchor.getBoundingClientRect();
+  const w=320; pop.style.width=w+"px"; pop.style.transform=""; pop.style.bottom="auto";
+  let left=r.left; if(left+w>window.innerWidth-12) left=window.innerWidth-12-w; if(left<12) left=12;
+  let top=r.bottom+8; const maxTop=window.innerHeight-40;
+  if(top>maxTop-260) top=Math.max(12, r.top-8-Math.min(420, window.innerHeight*0.6));
+  pop.style.left=left+"px"; pop.style.top=top+"px";
+}
+function openAreaPop(anchor){
+  renderAreaList("");
+  $("#areaSearch").value="";
+  positionAreaPop(anchor);
+  $("#areaPop").classList.add("show"); $("#areaBackdrop").classList.add("show");
+  setTimeout(()=>{ try{$("#areaSearch").focus();}catch(e){} }, 60);
+}
+function closeAreaPop(){ $("#areaPop").classList.remove("show"); $("#areaBackdrop").classList.remove("show"); }
+$("#areaSearch").addEventListener("input",e=>renderAreaList(e.target.value));
+$("#areaClear").addEventListener("click",()=>{ state.areas.clear(); afterFilterChange(); renderAreaList($("#areaSearch").value); });
+$("#areaClose").addEventListener("click",closeAreaPop);
+$("#areaBackdrop").addEventListener("click",closeAreaPop);
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeAreaPop(); });
 
 /* ============================================================ Counters */
 function updateCounters(){
@@ -817,31 +1130,32 @@ function updateCounters(){
   const midnight=new Date(); midnight.setHours(0,0,0,0); const mid=midnight.getTime();
   let today=0, hour=0;
   for(const id of state.order){ const m=state.byId.get(id); if(!m) continue;
+    if(!state.showTests && m.is_test) continue;
     if(m.ts_ms>=mid) today++; if(m.ts_ms>=hourAgo) hour++; }
   $("#stToday").textContent=today; $("#stHour").textContent=hour;
 }
 
-/* ============================================================ Live pan / flash */
+/* ============================================================ Live pulse / pill */
 function onNewLive(m){
   prependCard(m);
   updateChipCounts(); updateCounters();
-  if(m.geo){
-    // pulse marker
+  const visible = passesFilter(m);
+  if(m.geo && visible){
     const mk=state.markers.get(m.id);
-    if(mk){ const el=mk.getElement&&mk.getElement(); const inner=el&&el.querySelector(".mk");
-      if(inner){ inner.classList.add("new"); setTimeout(()=>inner.classList.remove("new"),5000); } }
+    if(mk){
+      const el=mk.getElement&&mk.getElement(); const inner=el&&el.querySelector(".mk");
+      if(inner){ inner.classList.add("new"); setTimeout(()=>inner.classList.remove("new"),5000); }
+    }
+    // Never move the viewport unless follow is ON.
     if(state.follow && state.view==="map"){
       const now=Date.now();
-      if(now-state.lastPan>3500){
-        state.lastPan=now;
-        map.panTo([m.geo.lat,m.geo.lon],{animate:true, duration:.9, easeLinearity:.25});
-      } else {
-        showLivePill(m);
-      }
-    } else if(state.view==="map" && !state.follow){
+      if(now-state.lastPan>3500){ state.lastPan=now; map.panTo([m.geo.lat,m.geo.lon],{animate:true, duration:.9, easeLinearity:.25}); }
+      else showLivePill(m);
+    } else if(state.view==="map"){
       showLivePill(m);
     }
   }
+  if(visible) queueNotify(m);
   hideEmpty();
 }
 let pillTimer=null;
@@ -853,6 +1167,57 @@ function showLivePill(m){
   p.onclick=()=>{ if(m.geo){ map.setView([m.geo.lat,m.geo.lon],13,{animate:true}); select(m.id,{focus:true}); } p.classList.remove("show"); };
   clearTimeout(pillTimer); pillTimer=setTimeout(()=>p.classList.remove("show"),4200);
 }
+
+/* ============================================================ Notifications */
+const notifyQ={list:[], timer:null};
+function bellSupported(){ return typeof Notification!=="undefined"; }
+function updateBellUI(){
+  const b=$("#bellBtn");
+  b.classList.toggle("on", state.notify);
+  b.classList.toggle("denied", bellSupported() && Notification.permission==="denied");
+  b.title = !bellSupported() ? "Meldingen niet ondersteund"
+          : state.notify ? "Browsermeldingen aan"
+          : Notification.permission==="denied" ? "Meldingen geblokkeerd in de browser"
+          : "Browsermeldingen uit";
+}
+async function toggleNotify(){
+  if(!bellSupported()){ updateBellUI(); return; }
+  if(state.notify){ state.notify=false; updateBellUI(); savePrefs(); return; }
+  if(Notification.permission==="granted"){ state.notify=true; }
+  else if(Notification.permission!=="denied"){
+    let p="denied"; try{ p=await Notification.requestPermission(); }catch(e){}
+    state.notify = (p==="granted");
+  } else { state.notify=false; }
+  updateBellUI(); savePrefs();
+}
+function queueNotify(m){
+  if(!state.notify || !bellSupported() || Notification.permission!=="granted") return;
+  notifyQ.list.push(m);
+  if(notifyQ.timer) return;
+  notifyQ.timer=setTimeout(flushNotify, 1200);
+}
+function flushNotify(){
+  notifyQ.timer=null;
+  const q=notifyQ.list.splice(0); if(!q.length) return;
+  try{
+    if(q.length===1){
+      const m=q[0]; const dc=DISCIPLINES[m.discipline]||DISCIPLINES.other;
+      const title=`${priLabel(m.priority)} · ${dc.label}${m.city?" · "+m.city:""}`;
+      const body=(m.body||m.raw||"").slice(0,140);
+      fireNotification(title, body, m);
+    } else {
+      const names=q.slice(0,4).map(x=>x.city||(DISCIPLINES[x.discipline]||DISCIPLINES.other).label);
+      fireNotification(`${q.length} nieuwe meldingen`, names.join(", ")+(q.length>4?" …":""), q[0]);
+    }
+  }catch(e){}
+}
+function fireNotification(title, body, m){
+  try{
+    const n=new Notification(title,{body, tag:"p2000-"+(m?m.id:Date.now()), renotify:false});
+    n.onclick=()=>{ try{window.focus();}catch(e){} if(m&&m.geo){ setView("map"); select(m.id,{focus:true}); } n.close(); };
+  }catch(e){}
+}
+$("#bellBtn").addEventListener("click",toggleNotify);
 
 /* ============================================================ Empty state */
 let hasData=false;
@@ -889,10 +1254,12 @@ $("#themeBtn").addEventListener("click",()=>{
 $("#followBtn").addEventListener("click",()=>{
   state.follow=!state.follow;
   $("#followBtn").classList.toggle("on",state.follow);
+  savePrefs();
 });
 
 /* ============================================================ Bottom sheet (mobile) */
 const side=$("#side"), sheetHead=$("#sheetHead");
+const SHEET_PEEK=168;
 function openSheet(){ side.classList.add("open"); }
 function closeSheet(){ side.classList.remove("open"); }
 (function sheetDrag(){
@@ -902,7 +1269,7 @@ function closeSheet(){ side.classList.remove("open"); }
     side.style.transition="none"; };
   const onMove=e=>{ if(!dragging) return; const y=(e.touches?e.touches[0].clientY:e.clientY);
     let dy=y-sy; moved=dy;
-    const base=open?0:(side.getBoundingClientRect().height-116);
+    const base=open?0:(side.getBoundingClientRect().height-SHEET_PEEK);
     let t=Math.max(0, base+dy); side.style.transform=`translateY(${t}px)`; };
   const onUp=()=>{ if(!dragging) return; dragging=false; side.style.transition=""; side.style.transform="";
     if(Math.abs(moved)>40){ if(moved<0) openSheet(); else closeSheet(); }
@@ -911,12 +1278,12 @@ function closeSheet(){ side.classList.remove("open"); }
   sheetHead.addEventListener("touchmove",onMove,{passive:true});
   sheetHead.addEventListener("touchend",onUp);
   sheetHead.addEventListener("click",e=>{ if(window.innerWidth>860) return;
+    if(e.target.closest(".chip,.fbtn,.followbtn")) return;
     if(Math.abs(moved)<6){ side.classList.toggle("open"); } });
 })();
 
 /* ============================================================ Tick relative times */
 setInterval(()=>{
-  const now=Date.now();
   document.querySelectorAll(".rel[data-ts], .t[data-ts]").forEach(el=>{
     el.textContent=relTime(+el.dataset.ts);
   });
@@ -930,20 +1297,14 @@ async function loadInitial(){
     if(!r.ok) throw new Error("HTTP "+r.status);
     const arr=await r.json();
     if(Array.isArray(arr)){
-      // API is newest-first; ingest oldest-first so order stays consistent & markers batch
-      const added=[];
-      for(let i=arr.length-1;i>=0;i--){ const res=ingest(arr[i],false); if(res) added.push(res.m); }
-      buildChips($("#chipsMap")); buildChips($("#chipsFeed"));
+      for(let i=arr.length-1;i>=0;i--){ ingest(arr[i],false); }
       rebuildLists(); updateChipCounts(); updateCounters();
       if(state.order.length){ hideEmpty();
-        // initial fit to markers
-        const pts=[]; state.markers.forEach(mk=>pts.push(mk.getLatLng()));
+        const pts=[]; state.markers.forEach((mk,id)=>{ const m=state.byId.get(id); if(m&&passesFilter(m)) pts.push(mk.getLatLng()); });
         if(pts.length){ try{ map.fitBounds(L.latLngBounds(pts).pad(.15),{maxZoom:11, animate:false}); }catch(e){} }
       }
     }
-  }catch(e){ console.warn("initial load failed",e);
-    buildChips($("#chipsMap")); buildChips($("#chipsFeed"));
-  }
+  }catch(e){ console.warn("initial load failed",e); rebuildLists(); }
 }
 
 /* ============================================================ SSE */
@@ -954,7 +1315,7 @@ function setConn(s){
   $("#connTxt").textContent = s==="live"?"Live": s==="reconnecting"?"Verbinden…":"Offline";
 }
 function connectSSE(){
-  setConn(esRetry?"reconnecting":"reconnecting");
+  setConn("reconnecting");
   try{ es=new EventSource("/events"); }catch(e){ scheduleReconnect(); return; }
   es.addEventListener("open",()=>{ esRetry=0; setConn("live"); });
   const handle=ev=>{
@@ -977,7 +1338,12 @@ document.addEventListener("visibilitychange",()=>{
 });
 
 /* ============================================================ Boot */
+loadPrefs();
+if(state.notify && (!bellSupported() || Notification.permission!=="granted")) state.notify=false;
 buildChips($("#chipsMap")); buildChips($("#chipsFeed"));
+buildFilterBar($("#fbarMap")); buildFilterBar($("#fbarFeed"));
+$("#followBtn").classList.toggle("on", state.follow);
+updateBellUI(); syncChips(); syncFilterBar();
 loadInitial().then(connectSSE);
 setTimeout(()=>map.invalidateSize(),120);
 window.addEventListener("resize",()=>{ if(state.view==="map") map.invalidateSize(); });
