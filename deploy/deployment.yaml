@@ -25,9 +25,10 @@ spec:
           env:
             - { name: NODE_ENV, value: production }
             - { name: PORT, value: "3000" }
-            # CNPG-managed credentials (secret p2000-pg-app, key uri).
+            # Shared cloud-native Postgres (databases/shared-pg), p2000 database.
+            # Secret is out-of-band (kubectl), created against shared-pg's p2000 role.
             - name: DATABASE_URL
-              valueFrom: { secretKeyRef: { name: p2000-pg-app, key: uri } }
+              valueFrom: { secretKeyRef: { name: p2000-db, key: DATABASE_URL } }
             # Shared secret the receiver-agent uses for POST /ingest (out-of-band).
             - name: INGEST_SECRET
               valueFrom: { secretKeyRef: { name: p2000-ingest, key: INGEST_SECRET } }
