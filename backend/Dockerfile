@@ -1,6 +1,6 @@
 # p2000.typeguru.nl backend (justscale). Runs via tsx + the justscale register
 # hook (the framework uses a custom compiler; there is no plain tsc build).
-# Build context = monorepo root:  docker build -f apps/backend/Dockerfile .
+# Build from the repo root:  docker build -f backend/Dockerfile .
 FROM node:24-slim
 
 RUN corepack enable
@@ -10,16 +10,16 @@ WORKDIR /repo
 # (temporal-field default) is applied on install.
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY patches ./patches
-COPY packages ./packages
-COPY services ./services
-COPY apps/backend/package.json ./apps/backend/package.json
+COPY backend/package.json ./backend/package.json
+COPY agent/package.json ./agent/package.json
 
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# App source
-COPY apps/backend ./apps/backend
+# App source + the frontend it serves.
+COPY backend ./backend
+COPY frontend ./frontend
 
-WORKDIR /repo/apps/backend
+WORKDIR /repo/backend
 ENV NODE_ENV=production PORT=3000
 EXPOSE 3000
 

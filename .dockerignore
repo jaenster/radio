@@ -2,7 +2,7 @@
 **/.zig-cache
 **/zig-out
 **/dist
-services/receiver-agent/dist
+agent/dist
 captures
 out.log
 .git

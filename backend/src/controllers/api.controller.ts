@@ -5,8 +5,12 @@ import { readFileSync } from 'node:fs';
 import { MessageService } from '../domains/message.service.js';
 import { serialize } from '../serialize.js';
 
-// The SPA is a single self-contained file; read once at boot and serve at '/'.
-const INDEX_HTML = readFileSync(new URL('../../public/index.html', import.meta.url), 'utf8');
+// The SPA (../../../frontend/index.html) is a single self-contained file; read
+// once at boot and serve at '/'. FRONTEND_HTML overrides the path in prod.
+const INDEX_HTML = readFileSync(
+  process.env.FRONTEND_HTML ?? new URL('../../../frontend/index.html', import.meta.url),
+  'utf8',
+);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

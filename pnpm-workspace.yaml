@@ -1,7 +1,9 @@
 packages:
-  - packages/*
-  - services/*
-  - apps/*
+  - backend
+  - agent
+allowBuilds:
+  cbor-extract: set this to true or false
+  esbuild: set this to true or false
 onlyBuiltDependencies:
   - cbor-extract
   - esbuild
