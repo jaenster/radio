@@ -48,7 +48,7 @@ const models = getRegisteredPgModels().filter((m: any) => m.table === 'p2000_mes
 console.log('registered models:', models.map((m: any) => m.table));
 
 const result = await generator.createDiff('./migrations', [...models], {
-  name: 'create_p2000_messages',
+  name: process.env.MIGRATION_NAME ?? 'schema_change',
 });
 // eslint-disable-next-line no-console
 console.log('hasChanges:', result.hasChanges, 'file:', (result as any).filepath);

@@ -1,6 +1,8 @@
-// Server-side P2000 enrichment: derive discipline + priority from the message
-// body, and geocode the location via PDOK (the free, official NL locator).
-// Kept as plain functions — no framework coupling — so it stays unit-testable.
+// Server-side P2000 enrichment: derive discipline, priority, test-flag, and
+// location (city / gemeente / province / veiligheidsregio) via PDOK geocoding.
+// Plain functions, no framework coupling, so it stays unit-testable.
+
+import { regionForGemeente } from './data/veiligheidsregio.js';
 
 export type Discipline = 'ambulance' | 'brandweer' | 'politie' | 'knrm' | 'other';
 
@@ -13,7 +15,13 @@ export interface Priority {
 export interface Enriched {
   discipline: Discipline;
   priority: Priority;
+  urgent: boolean;
+  isTest: boolean;
   city: string | null;
+  municipality: string | null;
+  province: string | null;
+  region: string | null;
+  postcode: string | null;
   geo: { lat: number; lon: number } | null;
 }
 
@@ -36,6 +44,20 @@ export function guessDiscipline(body: string): Discipline {
   return 'other';
 }
 
+/** Test/exercise pages that shouldn't clutter the operational feed. */
+export function isTestMessage(body: string): boolean {
+  return (
+    /(^|\W)(test\w*|testoproep|proefalarm|controlemelding|oefen\w*)(\W|$)/i.test(body) ||
+    /fijne dienst/i.test(body)
+  );
+}
+
+/** Dutch postcode like "3045PM" / "3045 PM" -> "3045 PM". */
+export function parsePostcode(body: string): string | null {
+  const m = /\b(\d{4})\s?([A-Za-z]{2})\b/.exec(body);
+  return m ? `${m[1]} ${m[2]!.toUpperCase()}` : null;
+}
+
 /** Strip prefixes / rit numbers / noise so PDOK free-text search matches the address. */
 export function cleanForGeocode(body: string): string {
   let s = body;
@@ -49,13 +71,20 @@ export function cleanForGeocode(body: string): string {
   return s;
 }
 
+interface PdokHit {
+  lat: number;
+  lon: number;
+  city: string | null;
+  gemeente: string | null;
+  province: string | null;
+}
+
 /** Geocode via PDOK Locatieserver free-text search. Returns null on miss/error. */
-export async function geocodePdok(
-  q: string,
-): Promise<{ lat: number; lon: number; city: string | null } | null> {
+export async function geocodePdok(q: string): Promise<PdokHit | null> {
   const url =
     'https://api.pdok.nl/bzk/locatieserver/search/v3_1/free' +
-    '?rows=1&fq=type:(adres OR weg OR woonplaats)&q=' +
+    '?rows=1&fl=centroide_ll,woonplaatsnaam,gemeentenaam,provincienaam' +
+    '&fq=type:(adres OR weg OR woonplaats)&q=' +
     encodeURIComponent(q);
   const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
   if (!r.ok) return null;
@@ -65,25 +94,56 @@ export async function geocodePdok(
   if (!ll) return null;
   const m = /POINT\(([-\d.]+) ([-\d.]+)\)/.exec(ll);
   if (!m) return null;
-  return { lon: parseFloat(m[1]!), lat: parseFloat(m[2]!), city: doc.woonplaatsnaam ?? null };
+  return {
+    lon: parseFloat(m[1]!),
+    lat: parseFloat(m[2]!),
+    city: doc.woonplaatsnaam ?? null,
+    gemeente: doc.gemeentenaam ?? null,
+    province: doc.provincienaam ?? null,
+  };
 }
 
 export async function enrich(wire: { body: string; capcodes: string[] }): Promise<Enriched> {
   const priority = parsePriority(wire.body);
   const discipline = guessDiscipline(wire.body);
+  const isTest = isTestMessage(wire.body);
+  const postcode = parsePostcode(wire.body);
+
   let city: string | null = null;
+  let municipality: string | null = null;
+  let province: string | null = null;
+  let region: string | null = null;
   let geo: { lat: number; lon: number } | null = null;
-  const q = cleanForGeocode(wire.body);
-  if (q.length >= 3) {
-    try {
-      const g = await geocodePdok(q);
-      if (g) {
-        geo = { lat: g.lat, lon: g.lon };
-        city = g.city;
+
+  // Don't spend geocoder calls on test pages (they're filtered out anyway).
+  if (!isTest) {
+    const q = cleanForGeocode(wire.body);
+    if (q.length >= 3) {
+      try {
+        const g = await geocodePdok(q);
+        if (g) {
+          geo = { lat: g.lat, lon: g.lon };
+          city = g.city;
+          municipality = g.gemeente;
+          province = g.province;
+          region = regionForGemeente(g.gemeente);
+        }
+      } catch {
+        /* geocode is best-effort; the message still shows in the feed */
       }
-    } catch {
-      /* geocode is best-effort; feed still shows the message */
     }
   }
-  return { discipline, priority, city, geo };
+
+  return {
+    discipline,
+    priority,
+    urgent: priority.level === 1,
+    isTest,
+    city,
+    municipality,
+    province,
+    region,
+    postcode,
+    geo,
+  };
 }

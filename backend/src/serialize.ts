@@ -1,6 +1,6 @@
 import type { P2000Message } from './domains/message.model.js';
 
-/** Shape the frontend + SSE consume (see public/index.html). */
+/** Shape the frontend + SSE consume (see ../../frontend/index.html). */
 export interface WireOut {
   id: string;
   ts_ms: number;
@@ -10,7 +10,13 @@ export interface WireOut {
   raw: string;
   discipline: string;
   priority: { raw: string | null; scheme: string | null; level: number | null };
+  urgent: boolean;
+  is_test: boolean;
   city: string | null;
+  municipality: string | null;
+  province: string | null;
+  region: string | null;
+  postcode: string | null;
   geo: { lat: number; lon: number } | null;
 }
 
@@ -29,7 +35,13 @@ export function serialize(m: P2000Message): WireOut {
       scheme: m.priorityScheme ?? null,
       level: m.priorityLevel ?? null,
     },
+    urgent: m.priorityLevel === 1,
+    is_test: m.isTest ?? false,
     city: m.city ?? null,
+    municipality: m.municipality ?? null,
+    province: m.province ?? null,
+    region: m.region ?? null,
+    postcode: m.postcode ?? null,
     geo: m.lat != null && m.lon != null ? { lat: m.lat, lon: m.lon } : null,
   };
 }

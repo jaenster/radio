@@ -30,7 +30,12 @@ export class MessageService extends defineService({
         priorityRaw: e.priority.raw ?? undefined,
         priorityScheme: e.priority.scheme ?? undefined,
         priorityLevel: e.priority.level ?? undefined,
+        isTest: e.isTest,
         city: e.city ?? undefined,
+        municipality: e.municipality ?? undefined,
+        province: e.province ?? undefined,
+        region: e.region ?? undefined,
+        postcode: e.postcode ?? undefined,
         lat: e.geo?.lat,
         lon: e.geo?.lon,
       });

@@ -18,7 +18,12 @@ export class P2000Message extends defineModel({
     priorityRaw: field.string().max(8).optional(),
     priorityScheme: field.string().max(4).optional(),
     priorityLevel: field.smallint().optional(),
+    isTest: field.boolean().default(false),
     city: field.string().max(160).optional(),
+    municipality: field.string().max(160).optional(),
+    province: field.string().max(80).optional(),
+    region: field.string().max(80).optional(), // veiligheidsregio
+    postcode: field.string().max(8).optional(),
     lat: field.double().optional(),
     lon: field.double().optional(),
   },
