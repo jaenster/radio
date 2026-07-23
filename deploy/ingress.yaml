@@ -5,6 +5,10 @@ metadata:
   namespace: p2000
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    # Temporary: served over HTTP while the wildcard IPv6 (AAAA) ingress path is
+    # repaired — Let's Encrypt HTTP-01 fails its IPv6 perspective otherwise.
+    # Re-enable the redirect once the TLS cert is issued.
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     # SSE (/events) must stream, not buffer; keep the long-lived connection open.
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
